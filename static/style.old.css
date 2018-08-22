@@ -1,0 +1,615 @@
+body{
+	/*background:black;*/
+	background: #193234;
+	margin: 0px;
+}
+#header{
+        padding: 1% 20% 1% 1%;height:5%;
+}
+#bg-back{
+	/*background-image: url("../static/world1.png");*/
+	background:#FDFDFD;
+	background-repeat: no-repeat;
+    background-size: 100% 100%;
+	width:100%;
+	height:100%;
+}
+#videoContainer
+{
+	background:##D46A6A;
+	width:75%;
+	height:88%;
+	padding:1%;
+}
+.handin{
+	position:absolute;
+}
+#action
+{
+	position:fixed;
+	right:1%;
+	top:3%;
+    /*opacity: 0.70;
+    filter: alpha(opacity=70);  For IE8 and earlier */
+}
+#nextState
+{
+	position:fixed;
+	right:1%;
+	top:20%;
+	/*opacity: 0.70;
+    filter: alpha(opacity=70);  For IE8 and earlier */
+}
+#command
+{
+	position:fixed;
+	right:1%;
+	bottom:1%;
+	overflow:auto;
+    /*opacity: 0.50;
+    filter: alpha(opacity=50);  For IE8 and earlier */
+	width:15%;
+	height:15%;
+}
+#recomendation
+{
+	position:fixed;
+	height:23%;
+	right:1%;
+	top:15%;
+	overflow:auto;
+    /*opacity: 0.40;
+    filter: alpha(opacity=35); /* For IE8 and earlier */
+}
+.skewright{
+    /*-ms-transform: skewY(10deg); /* IE 9 */
+    /*-webkit-transform: skewY(10deg); /* Safari */
+    /*transform: skewY(10deg); /* Standard syntax */
+}
+.skewleft{
+    /*-ms-transform: skewY(-10deg); /* IE 9 */
+    /*-webkit-transform: skewY(-10deg); /* Safari */
+    /*transform: skewY(-10deg); /* Standard syntax */
+}
+.box{
+	width:17%;
+	/*height:30%;*/
+	padding:1%;
+	background:#FDFDFD;
+	/*background: linear-gradient(#c0d5e3, #a0b5c3,#040);*/
+	border-color:#0F0F0F;
+	border-style: solid;
+    border-width: 10px 5px 5px 5px;
+	color:#000;
+	font-weight: 900;
+	z-index:99;
+}
+.gestBox{
+	background-image:url(../static/Pict/CubeSymbol.png);
+	background-size: 100% 100%;position:fixed;
+	bottom:15%;
+	right:1%;
+	opacity: 0.50;
+	width:20%;
+	height:25%;
+	filter: alpha(opacity=50); /* For IE8 and earlier */
+}
+.nextstateBox{
+	width:50%;
+	float:left;
+}
+
+#listapp{
+	width:50%;
+	position:fixed;
+	bottom:10%;
+	left:15%;
+	z-index:1;
+}
+#listvideo{
+	height:100%;overflow:auto;	
+}
+::-webkit-scrollbar { 
+    display: none; 
+}
+.appbox{
+	float:left;
+	width:33%;
+	color:#0F0F0F;
+	font-size:20px;
+}
+.searchBox{
+	/*position:fixed;*/
+	left:5%;
+	top:5%;
+	width: 30%;
+
+    margin: 1%;
+}
+.appimg{
+	width:100%;
+}
+iframe {
+  /* optional */
+  width: 100%;
+  height: 100%; 
+}
+.hyv-content-wrapper{
+	width: 55%;
+	/*color:#020f05;*/
+	height: 100%; 
+	float:right;
+}
+.title{
+	color:#FFF;
+	font-size:25px;
+	font-weight:900;
+}
+.title2{
+	color:#000;
+	font-size:25px;
+	font-weight:900;
+}
+.fbListPhoto1{
+	background-color:#ecf1ff;
+	color:#000;		
+}
+.fbListPhoto2{
+	background-color:#505bad;		
+	color:#FFF;
+}
+#albumList{
+	height: 100%;
+	background-color: #505bad;
+	text-align: left;
+	padding: 10px;
+	overflow:auto;	
+	font-family: arial;
+}
+
+#albumList::before, #albumList::after, #albumList .albumItem .albumTitle::before, #albumList .albumItem .albumTitle::after{
+    content: "";
+    clear: both;
+    display: table;
+}
+
+#albumList .albumItem{
+	margin-bottom: 10px;
+	padding: 10px;
+	/*background-color: rgba(0, 0, 0, 0.1);*/
+	transition: 0.2s;
+}
+
+#albumList .albumItem:last-child{
+	margin-bottom: 0;
+}
+
+#albumList .albumItem .albumTitle{
+	padding: 0 5px;
+	font-size: 14px;
+	white-space: no-wrap;
+	border-bottom: 1px solid #505bad;
+	/*color: #fff;*/
+	transition: 0.2s;
+}
+
+#albumList .albumItem .albumTitle span{
+	display: block;
+	float: left;
+	overflow:hidden;
+	height: 20px;
+}
+
+#albumList .albumItem .albumTitle span:first-child{
+	font-weight: bold;
+	width: 90%;
+}
+
+#albumList .albumItem .albumTitle span:last-child{
+	text-align: right;
+	width: 10%;
+}
+
+#albumList .albumItem .albumPictures{
+	margin-top: 10px;
+	text-align: center;
+	overflow: hidden;
+	height: 200px;
+}
+
+#albumList .albumItem .albumPictures .albumPicture{
+	display: inline-block;
+	height: 200px;
+	width: 200px;
+	margin-right: 5px;
+	background: #bfc4d3 no-repeat center;
+	background-size: cover;
+}
+
+#albumList .albumItem .albumPictures .albumPicture:last-child{
+	margin-right: 0;
+}
+
+#albumList .albumItem.selected, #albumList .albumItem:hover{
+	background-color: #ecf1ff;
+}
+
+#albumList .albumItem.selected .albumTitle, #albumList .albumItem:hover .albumTitle{
+	color: #1a243f;
+}
+.phone1{
+	background-color:#b0bec5;
+	color:#000;		
+}
+.phone2{
+	background-color:#f6f9fb;		
+	color:#FFF;
+}
+.youtubeListVideo1{
+	background-color:#ffd6d6;		
+}
+.youtubeListVideo2{
+	background-color:#764c4c;		
+}
+.hyv-thumb-wrapper{
+	width: 45%;
+	/*color:#020f05;*/
+	height: 100%; 
+	float:left;	
+}
+.videoListSelect{
+	color:#000;
+}
+.videoList{
+	color:#a6a6a6;
+}
+#videoElement {
+    width: 500px;
+    height: 375px;
+    background-color: #666;
+}
+.commandIconBox{
+	width:40%;
+	float:left;
+	color:white;
+}
+.commandIcon{
+	width:80%;
+	padding:5%;
+}
+.gestureIcon{
+	width:30%;
+	padding:15%;
+	float:right;
+}
+.nextstate1{
+	width:100%;
+}
+.gestBox1{
+	width:50%;
+	/*float:right;*/
+	positon:absolute;
+}
+#phoneList{
+	font-family: Arial;
+	text-align: left;
+	overflow:auto;
+	height:100%;
+}
+
+#phoneList .phoneContact::before, #phoneList .phoneContact::after{
+    content: "";
+    clear: both;
+    display: table;
+}
+
+.phoneContact{
+	height: 120px;
+	overflow: hidden;
+	/*background-color: #f6f9fb*/;
+	margin-bottom: 1px;
+	transition: 0.2s background-color;
+}
+
+.phoneContact > .contactPicture{
+	float: left;
+	width: 15%;
+	height: 110px;
+	margin: 5px;
+	text-align: cetner;
+	border-right: 1px solid #b0bec5;
+}
+
+.phoneContact > .contactPicture > div{
+	margin: auto;
+	background-image: url("./fontawesome/contactPicture.png");
+	background-size: cover;
+	background-color: #ffffff;
+	height: 105px;
+	width: 105px;
+	border: 2px solid #b0bec5;
+	border-radius: 50%;
+}
+
+.phoneContact > .contactDetail{
+	float: left;
+	width: calc(85% - 55px);
+	height: 80px;
+	padding: 20px;
+	color: #546e7a;
+	font-size: 28px;
+	transition: 0.2s color;
+	position: relative;
+}
+
+.phoneContact > .contactDetail .contactNumber{
+	font-size: 18px;
+	padding-top: 10px;
+}
+
+.phoneContact > .contactDetail .dialIcon{
+	position: absolute;
+	right: 20px;
+	top: 30px;
+	width: 60px;
+	height: 60px;
+	background-size: cover;
+	background-image: url("./fontawesome/dialing.png");
+	transform: scale(0);
+	transition: 0.5s transform;
+}
+
+.phoneContact:hover, .phoneContact.selected{
+	background-color: #b0bec5;
+	cursor: pointer;
+}
+
+.phoneContact:hover > .contactPicture,.phoneContact.selected > .contactPicture{
+	border-color: #f6f9fb;
+}
+
+.phoneContact:hover > .contactPicture > div, .phoneContact.selected > .contactPicture > div{
+	border-color: #ffffff;
+}
+
+.phoneContact:hover > .contactDetail, .phoneContact.selected > .contactDetail{
+	color: #ffffff;
+}
+
+.phoneContact:hover > .contactDetail .dialIcon, .phoneContact.selected > .contactDetail .dialIcon{
+	transform: scale(1);
+}
+
+#phoneDialingContainer{
+	width: 100%;
+	height: 100%;
+	font-family: Arial;
+	display: table;
+}
+
+#phoneDialingContainer > div{
+	display: table-row;
+}
+
+#phoneDialingContainer > div > div{
+	display: table-cell;
+	vertical-align: middle;
+	text-align: center;
+}
+
+#phoneDialingContainer .contactPicture{
+	display: inline-block;
+	background-image: url("./fontawesome/contactPicture.png");
+	background-size: cover;
+	background-color: #ffffff;
+	height: 350px;
+	width: 350px;
+	border: 2px solid #b0bec5;
+	border-radius: 50%;
+	box-shadow: 0px 7px 59px -10px rgba(0,0,0,0.64);
+}
+
+#phoneDialingContainer .contactName{
+	margin-top: 20px;
+	color: #546e7a;
+	font-size: 48px;
+}
+
+#phoneDialingContainer .contactNumber{
+	margin-bottom: 20px;
+	color: #8097a2;
+	font-size: 24px;
+}
+
+#phoneDialingContainer .dialingButtons{
+	margin-bottom: 200px;
+}
+
+#phoneDialingContainer .dialingButtons img{
+	width: 100px;
+}
+
+#phoneDialingContainer .dialingButtons img:first-child{
+	margin-right: 40px;
+	animation: dialingAnimation 0.3s alternate infinite ease-in;
+}
+
+@keyframes dialingAnimation{
+    from {transform: scale(1);}
+    to {transform: scale(1.1);}
+}
+
+.canvas {
+	position: fixed;
+	top: 0;
+	left: 0;
+	background: linear-gradient(to bottom,#fff,#ddd);
+}
+
+#homeDiv{
+	display: table;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 75%;
+	min-height: 100%;
+}
+
+#homeDiv > div{
+	display: table-row;
+}
+
+#homeDiv > div > div{
+	display: table-cell;
+	vertical-align: middle;
+}
+
+#homeDiv .homeTitle{
+	font-family: sans-serif;
+	font-size: 65px;
+	font-weight: normal;
+	text-align: center;
+	margin: 0 0 50px 0;
+	color: #37474f;
+	text-shadow: 2px 4px 5px rgba(0,0,0,0.3);
+}
+
+#homeDiv .homeContent{
+	text-align: center;
+}
+
+#homeDiv .homeContent a i{
+	line-height: 250px;
+}
+
+#homeDiv .homeContent a{
+	display: inline-block;
+	width: 250px;
+	height: 250px;
+	margin-right: 40px;
+	font-size: 100px;
+	text-decoration: none;
+	overflow: hidden;
+	border: 5px solid #ffffff;
+	border-radius: 50%;
+	background: #dddddd;
+	opacity: 0.8;
+	color: #ffffff;
+	box-shadow: 2px 4px 20px rgba(0,0,0,0.5);
+	
+	transition: 0.5s all;
+	animation-duration: 0.8s;
+	animation-timing-function: ease-in-out;
+}
+
+@keyframes bounce {
+	0%, 100%, 20%, 50%, 80% {transform: translateY(0);}
+	40% {transform: translateY(-30px);}
+	30% {transform: translateY(-20px);}
+	60% {transform: translateY(-15px);}
+	70% {transform: translateY(-5px);}
+	80% {transform: scale(1.2);}
+	100% {transform: scale(1.2);}
+}
+
+#homeDiv .homeContent a:hover, #homeDiv .homeContent a.selected{
+	animation-name: bounce;
+	transform: scale(1.2);
+}
+
+#homeDiv .homeContent a:active, #homeDiv .homeContent a.clicked{
+	transition: 0.2s all;
+	background: #ffffff !important;
+	opacity: 1;
+	transform: scale(1.2);
+}
+
+#homeDiv .homeContent > div:first-child a{
+	margin-bottom: 40px;
+}
+
+#homeDiv .homeContent > div a:last-child{
+	margin-right: 0;
+}
+
+#homeDiv .homeContent a.youtube{
+	background: #ff0000;
+}
+#homeDiv .homeContent a.youtube:active, #homeDiv .homeContent a.youtube.clicked{
+	color: #ff0000;
+	border-color: #ff0000;
+}
+
+#homeDiv .homeContent a.facebook{
+	background: #4267b2;
+}
+#homeDiv .homeContent a.facebook:active, #homeDiv .homeContent a.facebook.clicked{
+	color: #4267b2;
+	border-color: #4267b2;
+}
+
+#homeDiv .homeContent a.phone{
+	background: #607d8b;
+	font-size: 80px;
+}
+#homeDiv .homeContent a.phone:active, #homeDiv .homeContent a.phone.clicked{
+	color: #607d8b;
+	border-color: #607d8b;
+}
+
+#homeDiv .homeContent a.weather{
+	background: #9c27b0;
+	font-size: 80px;
+}
+#homeDiv .homeContent a.weather:active, #homeDiv .homeContent a.weather.clicked{
+	color: #9c27b0;
+	border-color: #9c27b0;
+}
+
+#homeDiv .homeContent a.line{
+	background: #00b900;
+}
+#homeDiv .homeContent a.line:active, #homeDiv .homeContent a.line.clicked{
+	color: #00b900;
+	border-color: #00b900;
+}
+
+#homeDiv .homeContent a.tourism{
+	background: #009688;
+}
+#homeDiv .homeContent a.tourism:active, #homeDiv .homeContent a.tourism.clicked{
+	color: #009688;
+	border-color: #009688;
+}
+
+
+
+@media only screen and (max-width: 1280px) {
+    #homeDiv .homeTitle{
+        font-size: 50px;
+    }
+	#homeDiv .homeContent a i{
+		line-height: 150px;
+	}
+
+	#homeDiv .homeContent a{
+		width: 150px;
+		height: 150px;
+		font-size: 50px !important;
+	}
+}
+
+@media only screen and (max-width: 1024px) {
+    #homeDiv .homeTitle{
+        font-size: 40px;
+    }
+	#homeDiv .homeContent a i{
+		line-height: 120px;
+	}
+
+	#homeDiv .homeContent a{
+		width: 120px;
+		height: 120px;
+		font-size: 50px !important;
+	}
+}

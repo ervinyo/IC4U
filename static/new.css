@@ -1,0 +1,146 @@
+#phoneList{
+	font-family: Arial;
+	text-align: left;
+}
+
+#phoneList .phoneContact::before, #phoneList .phoneContact::after{
+    content: "";
+    clear: both;
+    display: table;
+}
+
+#phoneList .phoneContact{
+	height: 120px;
+	overflow: hidden;
+	/*background-color: #f6f9fb;*/
+	margin-bottom: 1px;
+	transition: 0.2s background-color;
+}
+
+#phoneList .phoneContact > .contactPicture{
+	float: left;
+	width: 15%;
+	height: 110px;
+	margin: 5px;
+	text-align: cetner;
+	border-right: 1px solid #b0bec5;
+}
+
+#phoneList .phoneContact > .contactPicture > div{
+	margin: auto;
+	background-image: url("./fontawesome/contactPicture.png");
+	background-size: cover;
+	background-color: #ffffff;
+	height: 105px;
+	width: 105px;
+	border: 2px solid #b0bec5;
+	border-radius: 50%;
+}
+
+#phoneList .phoneContact > .contactDetail{
+	float: left;
+	width: calc(85% - 55px);
+	height: 80px;
+	padding: 20px;
+	color: #546e7a;
+	font-size: 28px;
+	transition: 0.2s color;
+	position: relative;
+}
+
+#phoneList .phoneContact > .contactDetail .contactNumber{
+	font-size: 18px;
+	padding-top: 10px;
+}
+
+#phoneList .phoneContact > .contactDetail .dialIcon{
+	position: absolute;
+	right: 20px;
+	top: 30px;
+	width: 60px;
+	height: 60px;
+	background-size: cover;
+	background-image: url("./fontawesome/dialing.png");
+	transform: scale(0);
+	transition: 0.5s transform;
+}
+
+#phoneList .phoneContact:hover, #phoneList .phoneContact.selected{
+	background-color: #b0bec5;
+	cursor: pointer;
+}
+
+#phoneList .phoneContact:hover > .contactPicture, #phoneList .phoneContact.selected > .contactPicture{
+	border-color: #f6f9fb;
+}
+
+#phoneList .phoneContact:hover > .contactPicture > div, #phoneList .phoneContact.selected > .contactPicture > div{
+	border-color: #ffffff;
+}
+
+#phoneList .phoneContact:hover > .contactDetail, #phoneList .phoneContact.selected > .contactDetail{
+	color: #ffffff;
+}
+
+#phoneList .phoneContact:hover > .contactDetail .dialIcon, #phoneList .phoneContact.selected > .contactDetail .dialIcon{
+	transform: scale(1);
+}
+
+#phoneDialingContainer{
+	width: 100%;
+	height: 100%;
+	font-family: Arial;
+	display: table;
+}
+
+#phoneDialingContainer > div{
+	display: table-row;
+}
+
+#phoneDialingContainer > div > div{
+	display: table-cell;
+	vertical-align: middle;
+	text-align: center;
+}
+
+#phoneDialingContainer .contactPicture{
+	display: inline-block;
+	background-image: url("./fontawesome/contactPicture.png");
+	background-size: cover;
+	background-color: #ffffff;
+	height: 350px;
+	width: 350px;
+	border: 2px solid #b0bec5;
+	border-radius: 50%;
+	box-shadow: 0px 7px 59px -10px rgba(0,0,0,0.64);
+}
+
+#phoneDialingContainer .contactName{
+	margin-top: 20px;
+	color: #546e7a;
+	font-size: 48px;
+}
+
+#phoneDialingContainer .contactNumber{
+	margin-bottom: 20px;
+	color: #8097a2;
+	font-size: 24px;
+}
+
+#phoneDialingContainer .dialingButtons{
+	margin-bottom: 200px;
+}
+
+#phoneDialingContainer .dialingButtons img{
+	width: 100px;
+}
+
+#phoneDialingContainer .dialingButtons img:first-child{
+	margin-right: 40px;
+	animation: dialingAnimation 0.3s alternate infinite ease-in;
+}
+
+@keyframes dialingAnimation{
+    from {transform: scale(1);}
+    to {transform: scale(1.1);}
+}
