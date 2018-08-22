@@ -1,0 +1,395 @@
+<html>
+	<script src="{{ url_for('static', filename='jquery.min.js') }}" type="text/javascript"></script>
+	<script src="{{ url_for('static', filename='cekhand.js') }}" type="text/javascript"></script>
+    <head>
+		<link rel="stylesheet" href="../../static/style.css">
+	</head>
+	<body>
+      
+      
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.5/socket.io.min.js"></script>
+<script type="text/javascript">
+namespace = '/test';
+var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + namespace);
+            // Event handler for new connections.
+            // The callback function is invoked when a connection with the
+            // server is established.
+            socket.on('connect', function() {
+                socket.emit('my_event', {data: 'I\'m connected!'});
+            });
+            // Event handler for server sent data.
+            // The callback function is invoked whenever the server emits data
+            // to the client. The data is then displayed in the "Received"
+            // section of the page.
+            socket.on('my_response', function(msg) {
+                if(msg.count=="ok"){
+                    $(".gestBox1").css({top:0});
+            				$(".gestBox1").css({right:0});
+            				$("#handin").css({position:"absolute"});
+            				$(".gestBox1").html('<img id=handBox src="../static/Pict/gestureOn.png" class="gestureIcon">');
+            				gestonoff(msg.count);
+            		}else{
+            				$(".gestBox1").css({top:0});
+            				$(".gestBox1").css({right:0});
+            				//$("#handin").removeClass("handin");
+            				$(".gestBox1").html('<img id=handBox src="../static/Pict/gestureOff.png" class="gestureIcon">');
+            				//alert("gesture:"+data);
+            			 gestonoff(msg.count);
+                }
+                //$('#log').append('<br>' + $('<div/>').text('Received #' + msg.count + ': ' + msg.data).html());
+            });
+$(document).ready(function(){
+	//cekHand();
+	facebookApiCall();
+	statsearch=0;
+	scroll=0;
+	gesture();
+	//setInterval(function(){ scroll=scroll+300;scrollTo(document.getElementById("listvideo"), scroll, 300); }, 3000);
+
+});
+function voice(){
+	$.ajax({
+		type : 'POST',
+		url : "/voice",
+		contentType: 'application/json;charset=UTF-8',
+		success: function(data) {
+            if(data=="0"){
+				//$("#inputcommand").html("<h1>Google Cloud Speech API could not understand audio, please retry again...</h1>");
+				voice();
+			}else if(data.toLowerCase()=="play"){
+				page = "youtube";
+				window.open("http://127.0.0.1:5000/"+page+"/?youtubeid="+$("#idplay").val(),"_self");
+			}else if(data.toLowerCase()=="close"){
+				//$(".box").hide();
+				var divs = document.getElementsByClassName("boxs");
+				for (var i = 0; i < divs.length; i = i + 1) {
+				  $(divs[i]).fadeOut("slow");
+				}
+				voice();
+			}else if(data.toLowerCase()=="show"){
+				var divs = document.getElementsByClassName("boxs");
+				for (var i = 0; i < divs.length; i = i + 1) {
+				  $(divs[i]).fadeIn("slow");
+				}
+				voice();
+			}else if(data.toLowerCase().includes("search")){
+				statsearch=1;
+				var divs = document.getElementsByClassName("searchBox");
+				for (var i = 0; i < divs.length; i = i + 1) {
+				  $(divs[i]).fadeIn("slow");
+				}
+				voice();
+			}else if(statsearch==1){
+				$("$searchBox").val(data.toLowerCase());
+				youtubeApiCall(data.toLowerCase());
+				//alert(data.toLowerCase()+statsearch);
+				var divs = document.getElementsByClassName("searchBox");
+				for (var i = 0; i < divs.length; i = i + 1) {
+				  $(divs[i]).fadeOut("slow");
+				}
+				statsearch=0;
+				voice();
+			}else if(data.toLowerCase().includes("up")){
+				vidscroll("up");
+				voice();
+			}else if(data.toLowerCase().includes("down")){
+				//alert("down");
+				vidscroll("down");
+				voice();
+			}else{
+				$("#inputcommand").html("<h2>Not a command, please try again ...</h2>");
+				voice();
+			}
+		}
+	});
+	  
+}
+
+function toggleVideo(state) {
+    // if state == 'hide', hide. Else: show video
+    var div = document.getElementById("videoContainer");
+    var iframe = div.getElementsByTagName("iframe")[0].contentWindow;
+    //div.style.display = state == 'hide' ? 'none' : '';
+    func = state == 'stop' ? 'pauseVideo' : 'playVideo';
+	//alert(func);
+    iframe.postMessage('{"event":"command","func":"' + func + '","args":""}','*');
+}
+vidIdscroll=1;scroll=0;
+function vidscroll(direction){
+	//alert('down');
+	$("#vid"+vidIdscroll).removeClass("fbListPhoto1");
+	$("#vid"+vidIdscroll).addClass("fbListPhoto2");
+	$("#vid"+vidIdscroll).removeClass("videoDeselect");
+	if(direction=="up" && vidIdscroll>1){
+		vidIdscroll--;
+		scroll=scroll-261;
+	}else if(direction=="down"){
+    	if(vidIdscroll<maxid-1){
+		vidIdscroll++;
+		scroll=scroll+261;
+		}
+	}
+	selectVIdeo(vidIdscroll);
+	//alert(scroll);
+	$("#vid"+vidIdscroll).removeClass("fbListPhoto2");
+	$(".albumItem").removeClass("selected");
+	$("#vid"+vidIdscroll).addClass("fbListPhoto1");
+	$("#vid"+vidIdscroll).addClass("videoSelect");
+	$("#vid"+vidIdscroll).find(".albumItem").addClass("selected");
+	//alert($("#vid"+vidIdscroll)[0].scrollHeight);
+	scrollTo(document.getElementById("albumList"), scroll, 500);
+	//$("#listvideo").scrollTop(scroll);
+}
+
+function scrollTo(element, to, duration) {
+    var start = element.scrollTop,
+        change = to - start,
+        currentTime = 0,
+        increment = 20;
+        
+    var animateScroll = function(){        
+        currentTime += increment;
+        var val = Math.easeInOutQuad(currentTime, start, change, duration);
+        element.scrollTop = val;
+        if(currentTime < duration) {
+            setTimeout(animateScroll, increment);
+        }
+    };
+    animateScroll();
+	//alert(to);
+}
+
+//t = current time
+//b = start value
+//c = change in value
+//d = duration
+Math.easeInOutQuad = function (t, b, c, d) {
+  t /= d/2;
+	if (t < 1) return c/2*t*t + b;
+	t--;
+	return -c/2 * (t*(t-2) - 1) + b;
+};
+statcekhand=0;
+maxid=0;
+idyo='';
+//statcekhand=setInterval(function(){cekHand();},500); //delay is in milliseconds 
+function gesture(){
+    //cekHand();
+	$.ajax({
+		type : 'POST',
+		url : "/gesture",
+		contentType: 'application/json;charset=UTF-8',
+		data:state="1",
+		success: function(data) {
+            if(data== ("12")){
+			    //alert("up");
+				vidscroll("up");
+				gesture();
+			}else if(data== ("13") || data== ("9")){
+				//alert("down");
+				vidscroll("down");
+				gesture();
+			}else if(data== ("15")){
+				//alert("back");
+				window.history.back();
+			}else if(data== ("5")){
+				window.open("http://127.0.0.1:5000/","_self")
+			}else{
+				$("#inputcommand").html("Please try again ...");
+				//alert("gesture:"+data);
+				gesture();
+			}
+			//gesture();
+			$(".gestBox1").css({top:0});
+         $(".gestBox1").css({right:0});
+         //$("#handin").removeClass("handin");
+         $(".gestBox1").html('<img id=handBox src="../static/Pict/gestureOff.png" class="gestureIcon">');
+		},
+		error: function(data) { 
+			//alert("Status: " + textStatus); alert("Error: " + errorThrown); 
+			$("#inputcommand").html("Please try again ...");
+			$(".gestBox1").css({top:0});
+            				$(".gestBox1").css({right:0});
+            				//$("#handin").removeClass("handin");
+            				$(".gestBox1").html('<img id=handBox src="../static/Pict/gestureOff.png" class="gestureIcon">');
+			gesture();
+		}  
+	});
+}
+
+function selectVIdeo(id){
+	select = $('#idplay'+id+'').val();
+	$("#idplay").val(select);
+	$.ajax({
+		type : 'GET',
+		url : "/setyoutubeID",
+		contentType: 'application/json;charset=UTF-8',
+		data:{"idplay":select},
+		success: function(data) {
+		
+		}
+	 })
+	//alert($('#idplay').val());
+}
+function facebookApiCall(strsesarch){
+
+	$.ajax({
+		type : 'POST',
+		url : "/getPost",
+		contentType: 'application/json;charset=UTF-8',
+		data:state="1",
+		success: function(res) {
+			strhtml = '';
+			var vidId=1;
+			//var returnedData = $.parseJSON(data);
+			//alert(Object.keys(res.photos.data).length);
+			//var obj = JSON.parse(data);
+			for(i=0;i<Object.keys(res.feed.data).length;i++){
+				ph=(res.feed.data)[i];
+				if(ph.message){
+					//alert(image.source);
+					//strhtml += '<img src="'+image.source+'">';
+					
+					var dateString = (new Date(ph.created_time)).toISOString().split("T")[0];
+					
+					if(vidId==1){
+    					if(!ph.story){
+        					ph.story = "";
+    					}
+						strhtml = strhtml + 
+						'<div id="vid'+vidId+'" class="fbListPhoto2"><div class="albumItem">'+
+							'<div class="albumTitle">'+
+								'<span><i class="far fa-list-alt"></i></span>'+
+    							'<span>' + dateString + '</span>'+
+							'</div>'+
+							'<div class="postContent">'+
+								ph.message+
+									"<br/>"+
+									ph.story+
+							'</div>'+
+						'</div></div>';
+					}else{
+    					if(!ph.story){
+        					ph.story = "";
+    					}
+						strhtml = strhtml + 
+						'<div id="vid'+vidId+'" class="fbListPhoto2"><div class="albumItem">'+
+							'<div class="albumTitle">'+
+								'<span><i class="far fa-list-alt"></i></span>'+
+    							'<span>' + dateString + '</span>'+
+							'</div>'+
+							'<div class="postContent">'+
+								ph.message+
+									"<br/>"+
+									ph.story+
+							'</div>'+
+						'</div></div>';
+					}
+					strhtml = strhtml+'<input type="hidden" id="idplay'+vidId+'" value="'+ph.id+'"/>';
+					vidId++;
+				}
+			}
+			maxid=vidId;
+			$("#albumList").html(strhtml);
+			
+			selectVIdeo(1);
+			
+			randomPostEffect();
+		}
+	});
+}
+
+function randomPostEffect(){
+	var backgroundImages = 7;
+	var randomNum = 1;
+	$(".postContent").each(function(){
+		randomNum = Math.floor((Math.random() * backgroundImages + 1));
+		$(this).css("background-image", "url('../static/illustration/pic" + randomNum + ".jpg')");
+		if(randomNum > 4){
+			$(this).css("color", "#263238");
+		}
+	});
+}
+</script>
+	<style>
+		#albumList .albumItem .postContent{
+			background-size: cover;
+			background-position: center; 
+			background-repeat: no-repeat;
+			font-size: 22px;
+			font-weight: bold;
+			color: #ffffff;
+			text-align: justify;
+			padding: 20px 10px;
+			height: 180px;
+			overflow: hidden;
+		}
+	</style>
+	<div id=main>
+		<!--<div id="bg-back"></div>-->
+		<div id="header">
+			<form class="form-signin"  role="form" enctype=multipart/form-data>
+				<input type="hidden" name="idplay" id="idplay"/>
+        	</form>
+			<h1 id="title" style="color:#ffffff;">Facebook post</h1>
+		</div>
+		<input class="searchBox" type="hidden" id="searchBox"/>
+		<div id=videoContainer  align="center">
+			<div id=albumList>
+			
+			</div>
+		</div>
+		<div id=action class="skewleft box boxs">
+
+			<div id="inputcommand">
+				Voice/Gesture
+			</div>
+			
+		</div>
+		<div id=nextState class="skewright box boxs">
+			<div class="nextstateBox" align="center">
+				<div class="nextstate1"><img src="../static/gest12.gif" class="gestureIcon"></div>
+				<div class="nextstate1">Up</div>
+			</div>
+			<div class="nextstateBox" align="center">
+				<div class="nextstate1"><img src="../static/gest13.gif" class="gestureIcon"></div>
+				<div class="nextstate1">Down</div>
+			</div>
+			
+			<div class="nextstateBox" align="center">
+				<div class="nextstate1"><img src="../static/gest5.png" class="gestureIcon"></div>
+				<div class="nextstate1">End</div>
+			</div>
+			<div class="nextstateBox" align="center">
+				<div class="nextstate1"><img src="../static/gest15.gif" class="gestureIcon"></div>
+				<div class="nextstate1">Back</div>
+			</div>
+
+		</div>
+		<div id=gestBox class="boxs gestBox">
+			<div id="handin" class="gestBox1">
+				<img id=handBox src="../static/Pict/gestureIcon.png" class="gestureIcon">
+			</div>
+		</div>
+		<div id=command class="commandIconBox">
+			<div id="iconText" class="commandIconBox" align="center"><img class="commandIcon" src="../static/Pict/textOn.png"/><br/>Gesture On</div>
+			<div id="iconVoice" class="commandIconBox" align="center"><img class="commandIcon" src="../static/Pict/voiceOff.png"/><br/>Voice Off</div>
+			
+		</div>
+	</div>
+
+      
+    </body>
+</html>
+<style>
+body{
+	/*background:black;*/
+	background: #2F4172;
+	margin: 0px;
+}
+iframe {
+  /* optional */
+  width: 100%;
+  height: 100%; 
+}
+</style>

@@ -1,0 +1,380 @@
+<html>
+	<script src="{{ url_for('static', filename='jquery.min.js') }}" type="text/javascript"></script>
+	<script src="{{ url_for('static', filename='cekhand.js') }}" type="text/javascript"></script>
+    <head>
+		<link rel="stylesheet" href="../../static/style.css">
+	</head>
+	<body>
+      
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.5/socket.io.min.js"></script>
+<script type="text/javascript">
+namespace = '/test';
+var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + namespace);
+            // Event handler for new connections.
+            // The callback function is invoked when a connection with the
+            // server is established.
+            socket.on('connect', function() {
+                socket.emit('my_event', {data: 'I\'m connected!'});
+            });
+            // Event handler for server sent data.
+            // The callback function is invoked whenever the server emits data
+            // to the client. The data is then displayed in the "Received"
+            // section of the page.
+            socket.on('my_response', function(msg) {
+                if(msg.count=="ok"){
+                    $(".gestBox1").css({top:0});
+            				$(".gestBox1").css({right:0});
+            				$("#handin").css({position:"absolute"});
+            				$(".gestBox1").html('<img id=handBox src="../static/Pict/gestureOn.png" class="gestureIcon">');
+            				gestonoff(msg.count);
+            		}else{
+            				$(".gestBox1").css({top:0});
+            				$(".gestBox1").css({right:0});
+            				//$("#handin").removeClass("handin");
+            				$(".gestBox1").html('<img id=handBox src="../static/Pict/gestureOff.png" class="gestureIcon">');
+            				//alert("gesture:"+data);
+            			 gestonoff(msg.count);
+                }
+                //$('#log').append('<br>' + $('<div/>').text('Received #' + msg.count + ': ' + msg.data).html());
+            });
+
+$(document).ready(function(){
+	//cekHand();
+	isplay=0;
+	statsearch=0;
+	//setInterval(function(){ vidscroll("down"); }, 3000);
+});
+statcekhand=0;
+maxid=0;
+//statcekhand=setInterval(function(){cekHand();},500); //delay is in milliseconds 
+function voice(){
+	$.ajax({
+		type : 'POST',
+		url : "/voice",
+		contentType: 'application/json;charset=UTF-8',
+		success: function(data) {
+            if(data=="0"){
+				//$("#inputcommand").html("<h1>Google Cloud Speech API could not understand audio, please retry again...</h1>");
+				voice();
+			}else if(data.toLowerCase().includes("play")){
+				//$("#inputcommand").html("<h1>"+data+"</h1>");
+				//alert(data);
+				//$("#videoContainer").html('<iframe width="560" height="315" src="https://www.youtube.com/embed/6ZfuNTqbHE8?autoplay=1&enablejsapi=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>');
+				toggleVideo("play");isplay=1;
+				voice();
+			}else if(data.toLowerCase().includes("stop")){
+				element = $("#videoContainer").html();
+				toggleVideo("stop");isplay=0;
+				//$(".ytp-play-button").click();
+				voice();
+			}else if(data.toLowerCase().includes("close")){
+				//$(".box").hide();
+				var divs = document.getElementsByClassName("boxs");
+				for (var i = 0; i < divs.length; i = i + 1) {
+				  $(divs[i]).fadeOut("slow");
+				}
+				voice();
+			}else if(data.toLowerCase().includes("show")){
+				var divs = document.getElementsByClassName("boxs");
+				for (var i = 0; i < divs.length; i = i + 1) {
+				  $(divs[i]).fadeIn("slow");
+				}
+				voice();
+			}else if(data.toLowerCase().includes("search")){
+				statsearch=1;
+				voice();
+			}else if(statsearch==1){
+				youtubeApiCall(data.toLowerCase())
+				//alert(data.toLowerCase()+statsearch);
+				statsearch=0;
+				voice();
+			}else if(data.toLowerCase().includes("up")){
+				vidscroll("up");
+				voice();
+			}else if(data.toLowerCase().includes("down")){
+				alert("down");
+				vidscroll("down");
+				voice();
+			}else{
+				$("#inputcommand").html("Please try again ...");
+				voice();
+			}
+		}
+	});
+	  
+}
+
+vidIdscroll=0;scroll=0;
+function vidscroll(direction){
+	//alert('down');
+	//$("#vid"+vidIdscroll).css({backgroundColor: 'transparent'});
+	if(direction=="up" && vidIdscroll>0){
+    	if(vidIdscroll>0){
+		vidIdscroll--;
+		//scroll=scroll-200;
+		}
+	}else if(direction=="down"){
+    	if(vidIdscroll<maxid){
+		vidIdscroll++;
+		//scroll=scroll+200;
+		}
+	}
+	//alert(vidIdscroll);
+	setImg(vidIdscroll);
+}
+
+function gesture(){
+    //cekHand();
+	$.ajax({
+		type : 'POST',
+		url : "/gesture",
+		contentType: 'application/json;charset=UTF-8',
+		data:state="2",
+		success: function(data) {
+            if(data== ("15")){
+				//alert("back");
+				window.history.back();
+			}else if(data== ("12")){
+			    //alert("up");
+				vidscroll("up");
+				gesture();
+			}else if(data== ("13") || data== ("9")){
+				//alert("down");
+				vidscroll("down");
+				gesture();
+			}else if(data== ("5")){
+				window.open("http://127.0.0.1:5000/","_self")
+			}else{
+				//alert("gesture:"+data);
+				$("#inputcommand").html("Please try again ...");
+				gesture();
+			}
+			//gesture();
+			$(".gestBox1").css({top:0});
+         $(".gestBox1").css({right:0});
+         //$("#handin").removeClass("handin");
+         $(".gestBox1").html('<img id=handBox src="../static/Pict/gestureOff.png" class="gestureIcon">');
+		},
+		error: function(data) { 
+			//alert("Status: " + textStatus); alert("Error: " + errorThrown); 
+			$("#inputcommand").html("Please try again ...");
+			$(".gestBox1").css({top:0});
+            				$(".gestBox1").css({right:0});
+            				//$("#handin").removeClass("handin");
+            				$(".gestBox1").html('<img id=handBox src="../static/Pict/gestureOff.png" class="gestureIcon">');
+			gesture();
+		}  
+	});
+}
+//getPhoto();
+function getPhoto(){
+    
+	$.ajax({
+		type : 'POST',
+		url : "/getdataPhoto",
+		contentType: 'application/json;charset=UTF-8',
+		data:state="2",
+		success: function(data) {
+			alert(data);
+		},
+		error: function(data) { 
+			alert(data);
+		}  
+	});
+}
+function getUrlVars(){
+	//alert(window.location);
+    url = String(window.location);
+	var res = url.split("photosrc=");
+	//alert(res);
+	vars=res[1];
+    //alert(JSON.parse("{{dataPhoto}}"));
+	//alert($('#idplay').val());
+	//$("#videoContainer").html('<img height="100%" src="'+vars+'"/>');
+    return vars;
+}
+facebookApiCall();
+arrImg=[];
+function facebookApiCall(strsesarch){
+   var albumid=getUrlVars();
+	$.ajax({
+		type : 'POST',
+		url : "/getPhotobyAlbumsId",
+		//contentType: 'application/json;charset=UTF-8',
+		data:albumid,
+		success: function(res) {
+			//updateDtaPhoto(JSON.stringify(res));
+			dataPhoto=res;
+			strhtml = '';
+			var vidId=0;
+			//var returnedData = $.parseJSON(data);
+			//alert(Object.keys(res.photos.data).length);
+			//var obj = JSON.parse(data);
+			for(j=0;j<Object.keys(res.photos.data).length;j++){
+				album=(res.photos.data)[j];
+				image=(album.images)[0];
+				//alert(image.source);
+				//for(i=0;i<Object.keys(album.photos.data).length;i++){
+				//	ph=(album.photos.data)[i];
+				//	image=(ph.images)[0];
+					//alert(image.source);
+					//strhtml += '<img src="'+image.source+'">';
+					if(vidId==0){
+						arrImg[vidId]='<div id="vid'+vidId+'" class="slide">'+
+							'<img style="height:100%;width:100%;object-fit:scale-down;" src="'+image.source+'">'+
+						'</div>';
+					}else{
+						arrImg[vidId]='<div id="vid'+vidId+'" class="slide">'+
+							'<img style="height:100%;width:100%;object-fit:scale-down;" src="'+image.source+'">'+
+						'</div>';
+					}
+					//strhtml = strhtml+'<input type="hidden" id="idplay'+vidId+'" value="'+image.source+'"/>';
+					vidId++;
+				//}
+			}
+			maxid=vidId;
+			//alert(arrImg[0]);
+			var divs = document.getElementsByClassName("myModal");
+				for (var i = 0; i < divs.length; i = i + 1) {
+				  $(divs[i]).fadeIn("slow");
+				}
+			$("#listphoto").html(arrImg[0]);
+			gesture();
+			//selectVIdeo(1);
+		}
+	});
+}
+function setImg(id){
+
+
+	$("#listphoto").html(arrImg[id]);
+}
+</script>
+	<div id=main>
+		<!--<div id="bg-back"></div>-->
+		<input  name="idplay"type="hidden" id="idplay" value="{{id}}"/>
+
+		<div id=videoContainer  align="center">
+			<div id="myModal" class="modal myModal">
+
+			  <!-- Modal content -->
+			  <div class="modal-content" align="left">
+				<div style="background:none;width:75%;" align="center" id=listphoto></div>
+			  </div>
+
+			</div>
+		</div>
+
+		<div id=action class="skewleft box boxs">
+
+			<div id="inputcommand">
+				Voice/Gesture
+				
+			</div>
+			
+		</div>
+		<div id=nextState class="skewright box boxs">
+
+			<div class="nextstateBox" align="center">
+				<div class="nextstate1"><img src="../static/gest12.gif" class="gestureIcon"></div>
+				<div class="nextstate1">Prev</div>
+			</div>
+			<div class="nextstateBox" align="center">
+				<div class="nextstate1"><img src="../static/gest13.gif" class="gestureIcon"></div>
+				<div class="nextstate1">Next</div>
+			</div>
+			<div class="nextstateBox" align="center">
+				<div class="nextstate1"><img src="../static/gest5.png" class="gestureIcon"></div>
+				<div class="nextstate1">End</div>
+			</div>
+			<div class="nextstateBox" align="center">
+				<div class="nextstate1"><img src="../static/gest15.gif" class="gestureIcon"></div>
+				<div class="nextstate1">Back</div>
+			</div>
+
+		</div>
+		<div id=handBox class="boxs gestBox">
+			<div id="handin" class="gestBox1">
+				<img id=handBox src="../static/Pict/gestureIcon.png" class="gestureIcon">
+			</div>
+		</div>
+		<div id=command class="commandIconBox">
+			<div id="iconText" class="commandIconBox" align="center"><img class="commandIcon" src="../static/Pict/textOn.png"/><br/>Gesture On</div>
+			<div id="iconVoice" class="commandIconBox" align="center"><img class="commandIcon" src="../static/Pict/voiceOff.png"/><br/>Voice Off</div>
+			
+		</div>
+		<!--<div id=recomendation class="skewright box" style="overflow:scroll;">
+			<div>
+				Video 1
+			</div>
+			<div>
+				Video 2
+			</div>
+			<div>
+				Video 3
+			</div>
+		</div>-->
+	</div>
+
+      
+    </body>
+</html>
+<style>
+body{
+	/*background:black;*/
+	background: #2F4172;
+	margin: 0px;
+}
+iframe {
+  /* optional */
+  width: 100%;
+  height: 100%; 
+}
+#carousel {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    white-space:nowrap;
+}
+
+#carousel .slide {
+    display: inline-block;
+	width: 100%;
+}
+/* The Modal (background) */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 0; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: #2F4172; /* Black w/ opacity */
+}
+
+/* Modal Content/Box */
+.modal-content {
+    /*background-color: #fefefe;*/
+
+    /*border: 1px solid #888;*/
+    width: 100%; /* Could be more or less, depending on screen size */
+}
+
+/* The Close Button */
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+</style>

@@ -1,0 +1,360 @@
+<!doctype html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="../../static/style.css">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+          /* set black background color, white text and some padding */
+    footer {
+      background-color: #555;
+      color: white;
+      padding: 15px;
+    }
+      header {
+      background-color: #255;
+      color: white;
+      padding: 15px;
+    }
+    </style>
+    <title>facebook</title>
+</head>
+<body>
+<script type=text/javascript>
+
+$(document).ready(function(){
+	//cekHand();
+	//facebookApiCall();
+	statsearch=0;
+	voice();
+	gesture();
+});
+function voice(){
+	$.ajax({
+		type : 'POST',
+		url : "/voice",
+		contentType: 'application/json;charset=UTF-8',
+		success: function(data) {
+            if(data=="0"){
+				//$("#inputcommand").html("<h1>Google Cloud Speech API could not understand audio, please retry again...</h1>");
+				voice();
+			}else if(data.toLowerCase()=="play"){
+				page = "youtube";
+				window.open("http://127.0.0.1:5000/"+page+"/?youtubeid="+$("#idplay").val(),"_self");
+			}else if(data.toLowerCase()=="close"){
+				//$(".box").hide();
+				var divs = document.getElementsByClassName("boxs");
+				for (var i = 0; i < divs.length; i = i + 1) {
+				  $(divs[i]).fadeOut("slow");
+				}
+				voice();
+			}else if(data.toLowerCase()=="show"){
+				var divs = document.getElementsByClassName("boxs");
+				for (var i = 0; i < divs.length; i = i + 1) {
+				  $(divs[i]).fadeIn("slow");
+				}
+				voice();
+			}else if(data.toLowerCase().includes("search")){
+				statsearch=1;
+				var divs = document.getElementsByClassName("searchBox");
+				for (var i = 0; i < divs.length; i = i + 1) {
+				  $(divs[i]).fadeIn("slow");
+				}
+				voice();
+			}else if(statsearch==1){
+				$("$searchBox").val(data.toLowerCase());
+				youtubeApiCall(data.toLowerCase());
+				//alert(data.toLowerCase()+statsearch);
+				var divs = document.getElementsByClassName("searchBox");
+				for (var i = 0; i < divs.length; i = i + 1) {
+				  $(divs[i]).fadeOut("slow");
+				}
+				statsearch=0;
+				voice();
+			}else if(data.toLowerCase().includes("up")){
+				vidscroll("up");
+				voice();
+			}else if(data.toLowerCase().includes("down")){
+				//alert("down");
+				vidscroll("down");
+				voice();
+			}else{
+				$("#inputcommand").html("<h2>Not a command, please try again ...</h2>");
+				voice();
+			}
+		}
+	});
+	  
+}
+
+function toggleVideo(state) {
+    // if state == 'hide', hide. Else: show video
+    var div = document.getElementById("videoContainer");
+    var iframe = div.getElementsByTagName("iframe")[0].contentWindow;
+    //div.style.display = state == 'hide' ? 'none' : '';
+    func = state == 'stop' ? 'pauseVideo' : 'playVideo';
+	//alert(func);
+    iframe.postMessage('{"event":"command","func":"' + func + '","args":""}','*');
+}
+vidIdscroll=1;scroll=0;
+function vidscroll(direction){
+	//alert('down');
+	$("#vid"+vidIdscroll).css({backgroundColor: 'white'});
+	$("#vid"+vidIdscroll).removeClass("videoDeselect");
+	if(direction=="up" && vidIdscroll>1){
+		vidIdscroll--;
+		scroll=scroll-300;
+	}else if(direction=="down"){
+		vidIdscroll++;
+		scroll=scroll+300;
+	}
+	//alert(scroll);
+	$("#vid"+vidIdscroll).css({backgroundColor: '#193234'});
+	$("#vid"+vidIdscroll).addClass("videoSelect");
+	//alert($("#vid"+vidIdscroll)[0].scrollHeight);
+	scrollTo(document.getElementById("listvideo"), scroll, 500);
+	//$("#listvideo").scrollTop(scroll);
+}
+
+function scrollTo(element, to, duration) {
+    var start = element.scrollTop,
+        change = to - start,
+        currentTime = 0,
+        increment = 20;
+        
+    var animateScroll = function(){        
+        currentTime += increment;
+        var val = Math.easeInOutQuad(currentTime, start, change, duration);
+        element.scrollTop = val;
+        if(currentTime < duration) {
+            setTimeout(animateScroll, increment);
+        }
+    };
+    animateScroll();
+	//alert(to);
+}
+
+//t = current time
+//b = start value
+//c = change in value
+//d = duration
+Math.easeInOutQuad = function (t, b, c, d) {
+  t /= d/2;
+	if (t < 1) return c/2*t*t + b;
+	t--;
+	return -c/2 * (t*(t-2) - 1) + b;
+};
+function cekHand(){
+	$.ajax({
+		type : 'POST',
+		url : "/cekHand",
+		contentType: 'application/json;charset=UTF-8',
+		data:state="1",
+		success: function(data) {
+			var divs = document.getElementsByClassName("gestBox1");
+            if(data=="True"){
+				$(".gestBox1").html('<img id=handBox src="../static/Pict/gestureOn.png" class="gestureIcon">');
+				setTimeout(function(){
+							for (var i = 0; i < divs.length; i = i + 1) {
+							  
+							}
+					   },500); //delay is in milliseconds 
+				cekHand();
+			}else{
+				$(".gestBox1").html('<img id=handBox src="../static/Pict/gestureOff.png" class="gestureIcon">');
+				//alert("gesture:"+data);
+				setTimeout(function(){
+							for (var i = 0; i < divs.length; i = i + 1) {
+							  
+							}
+					   },500); //delay is in milliseconds 
+				cekHand();
+			}
+			//gesture();
+		}
+	});
+}
+function gesture(){
+	$.ajax({
+		type : 'POST',
+		url : "/gesture",
+		contentType: 'application/json;charset=UTF-8',
+		data:state="1",
+		success: function(data) {
+            if(data== ("12")){
+			    //alert("up");
+				vidscroll("up");
+				gesture();
+			}else if(data== ("13")){
+				//alert("down");
+				vidscroll("down");
+				gesture();
+			}else if(data== ("7") || data== ("8")){
+				//alert("open video");
+				page = "youtube";
+				window.open("http://127.0.0.1:5000/"+page+"/?youtubeid="+$("#idplay").val(),"_self");
+			}else if(data== ("11")){
+				//alert("back");
+				window.history.back();
+			}else{
+				$("#inputcommand").html("<h1>Not a command, please try again ...</h1>");
+				//alert("gesture:"+data);
+				gesture();
+			}
+			//gesture();
+		},
+		error: function(data) { 
+			//alert("Status: " + textStatus); alert("Error: " + errorThrown); 
+			$("#inputcommand").html("<h1>Gesture Recognition Error, please reload the page ...</h1>");
+			gesture();
+		}  
+	});
+}
+function selectVIdeo(id){
+	select = $('#idplay'+id+'').val();
+	$("#idplay").val(select);
+	//alert($('#idplay'+id+'').val());
+}
+function facebookApiCall(strsesarch){
+	$.ajax({
+		type : 'POST',
+		url : "/getPhoto",
+		contentType: 'application/json;charset=UTF-8',
+		data:state="1",
+		success: function(res) {
+			//var returnedData = $.parseJSON(data);
+			alert(Object.keys(res.photos.data).length);
+			//var obj = JSON.parse(data);
+			for(i=0;i<Object.keys(res.photos.data).length;i++){
+			    //alert(Object.keys(res.photos.data)[0])
+			}
+			strhtml = '';
+			$("#listphoto").html();
+			//gesture();
+		}
+	});
+}
+
+</script>
+<h1><header><i class="fa fa-facebook-official" style="font-size:36px">acebook from us</i></header></h1>
+<div class="container">
+  <p><strong>note:</strong> please <strong>choose</strong> one of the menu in below.</p>
+  <div class="panel-group" id="accordion">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h4 class="panel-title">
+          <a data-toggle="collapse" data-parent="#accordion" href="#collapse1"><h3>profile of you</h3></a>
+        </h4>
+      </div>
+      <div id="collapse1" class="panel-collapse collapse">
+        <div class="panel-body">your profile tells your story. you can choose what to share, such as interests, photos and personal information like your hometown, and who to share it with. your profile also includes your timeline, where you can see your own posts and posts you've been tagged in. your timeline and tagging settings will help you manage tags and review who can add and see things on your timeline.</div>
+        <table class="table">
+            <tr class="success">
+            <td>id</td>
+            <td> : </td>
+            <td>{{id}}</td>
+            </tr>
+            <tr class="success">
+            <td>name</td>
+            <td> : </td>
+            <td>{{name}}</td>
+            </tr>
+            <tr class="success">
+            <td>email</td>
+            <td> : </td>
+            <td>{{email}}</td>
+            </tr>
+            <tr class="success">
+            <td>gender</td>
+            <td> : </td>
+            <td>{{gender}}</td>
+            </tr>
+        </table>
+      </div>
+    </div>
+
+
+
+
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h4 class="panel-title">
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapse2"><h3>photos of you</h3></a>
+        </h4>
+      </div>
+      <div id="collapse2" class="panel-collapse collapse">
+        <div class="panel-body">you can share one photo or create an album with a collection of photos from a special time or place, like a birthday party or vacation. it's up to you to choose who can see your photos and albums. if someone tagged you in a photo you don't want to be tagged in, you can untag it.</div>
+
+          <div>{{photo}}</div>
+
+          <br><div id="mycarousel" class="carousel slide" data-ride="carousel" align="center">
+            <!-- indicators -->
+            <ol class="carousel-indicators">
+            <li data-target="#mycarousel" data-slide-to="0" class="active"></li>
+      <li data-target="#mycarousel" data-slide-to="1"></li>
+      <li data-target="#mycarousel" data-slide-to="2"></li>
+    </ol>
+
+    <!-- wrapper for slides -->
+	<div class="carousel-inner">
+      <div class="item active">
+        <img src="static/1.jpg" style="width:50%;">
+      </div>
+
+      <div class="item">
+        <img src="static/2.jpg" style="width:50%;">
+      </div>
+
+      <div class="item">
+        <img src="static/3.jpg" style="width:50%;">
+      </div>
+    </div>
+
+    <!-- left and right controls -->
+    <a class="left carousel-control" href="#mycarousel" data-slide="prev">
+      <span class="glyphicon glyphicon-chevron-left"></span>
+      <span class="sr-only">previous</span>
+    </a>
+    <a class="right carousel-control" href="#mycarousel" data-slide="next">
+      <span class="glyphicon glyphicon-chevron-right"></span>
+      <span class="sr-only">next</span>
+    </a>
+  </div>
+
+      </div>
+    </div>
+
+
+
+
+
+<div id=gestBox class="boxs gestBox">
+			<div class="gestBox1">
+				<img id=handBox src="../static/Pict/gestureIcon.png" class="gestureIcon">
+			</div>
+		</div>
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h4 class="panel-title">
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapse3"><h3>posts of you</h3></a>
+        </h4>
+      </div>
+      <div id="collapse3" class="panel-collapse collapse">
+        <div class="panel-body">you can control who can see your timeline posts. if you tag someone in a post, you create a link to their profile. the post you tag the person in may also be added to that person’s timeline. learn more about tagging.</div>
+        <div>
+            {{post}}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+
+<footer class="container-fluid text-center">
+  <h2>&copy; minelab</h2>
+</footer>
+</html>

@@ -1,0 +1,46 @@
+<html>
+<script type="text/javascript" src="skype-uri.js"></script>
+<body>
+<script src="https://secure.skypeassets.com/i/scom/js/skype-uri.js"></script>
+
+<script src="../static/jquery.min.js"></script>
+
+<script>
+// code for adding and clicking hidden Skype buttons
+var
+SkypeButtons_ek = {},
+
+// call when doc ready to setup the hidden button
+// id = any unique id, user = your skype user id, type = call or chat
+SkypeButton_ek_add = function(id, user, type){
+  SkypeButtons_ek[id] = {user: user, type: type};
+  jQuery("body").append('<div id="SkypeButton_ek_'+id+'"></div>');
+  Skype.ui({
+    "name": type,
+    "element": "SkypeButton_ek_"+id,
+    "participants": ["asyrofa.rahmi"]
+  });
+  jQuery("#SkypeButton_ek_"+id+", #SkypeButton_ek_"+id+" > iframe").hide();
+},
+
+// call from your own link/button/event
+// id is the same id you passed to SkypeButton_ek_add
+SkypeButton_ek_click = function(id){
+  if (SkypeButtons_ek[id].type == 'chat')
+    SkypeWebControl.SDK.Chat.startChat({ConversationType: 'person', ConversationId: SkypeButtons_ek[id].user});
+  else {
+    Skype.tryAnalyzeSkypeUri(SkypeButtons_ek[id].type, '0');
+    Skype.trySkypeUri_Generic('skype:'+SkypeButtons_ek[id].user+'?'+SkypeButtons_ek[id].type+'', jQuery('#SkypeButton_ek_'+id+' > iframe').attr('id'), '0');
+  }
+};
+
+// add Skype buttons hidden
+jQuery(document).ready(function($){
+  SkypeButton_ek_add(1, 'echo123', 'chat'); 
+  SkypeButton_ek_add(2, 'echo123', 'call'); 
+});
+</script>
+<a href="" onclick="SkypeButton_ek_click(1); return false;">Skype Chat</a>
+<a href="" onclick="SkypeButton_ek_click(2); return false;">Skype Call</a>
+</body>
+</html>
